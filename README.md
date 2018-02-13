@@ -1,16 +1,7 @@
 # document
-设计文档
+参考资料
+
+- [一文弄懂神经网络中的反向传播法——BackPropagation](http://www.cnblogs.com/charlotte77/p/5629865.html)
+    + [源代码](https://github.com/Save404/document/backpropagation.py)
 
 
-## 前端设计思路：  
-语言：html+css+javascript  
-库、框架：jquery，bootstrap......
-
-
-
-
-
-
-## 后端设计思路：  
-语言：java
-框架：......
