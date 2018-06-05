@@ -1,0 +1,5 @@
+农产品详情页面删除字段：年产量ncpAnnualOutput，产品参考价格ncpReferencePrice 批量出仓价格ncpBatchPrice 起送量ncpMinCount 批量物流成本ncpDeliveryCost
+
+添加字段：供应量单位 supplyUnit 产品种植面积单位 plantUnit
+
+要求 供应量和供应量单位前端设置为必填 供应量和种植面积input均为数字包括小数 单位为下拉框 提交时分别对应字段
