@@ -3,3 +3,5 @@
 添加字段：供应量单位 supplyUnit 产品种植面积单位 plantUnit
 
 要求 供应量和供应量单位前端设置为必填 供应量和种植面积input均为数字包括小数 单位为下拉框 提交时分别对应字段
+
+买家下单页所需字段: orderPayment订单总额 addressId收货地址ID（单选框选择） nhBasicId 农户的Id orderNumber商品数量 orderUnit商品单位 goodId商品Id
