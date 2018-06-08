@@ -5,3 +5,7 @@
 要求 供应量和供应量单位前端设置为必填 供应量和种植面积input均为数字包括小数 单位为下拉框 提交时分别对应字段
 
 买家下单页所需字段: orderPayment订单总额 addressId收货地址ID（单选框选择） nhBasicId 农户的Id orderNumber商品数量 orderUnit商品单位 goodId商品Id
+post_fee快递费用
+
+农户查看订单列表页渲染字段:orderId订单号 orderPayment订单总额 orderStatus订单状态 payStatus支付状态 postStatus快递状态 orderCreated订单创建时间 orderNumber商品数量 orderUnit商品单位 receiverName收货人名字 receiverPhone收货人手机 receiverAddress收获地址 nameP nameC nameA, postFee快递费用
+buyerMessage买家留言 goodName 商品名字
