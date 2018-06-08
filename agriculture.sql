@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : LLT
+Source Server         : localhost_3306
 Source Server Version : 50717
 Source Host           : localhost:3306
 Source Database       : agriculture
@@ -10,10 +10,33 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2018-05-31 18:48:47
+Date: 2018-06-08 22:25:57
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for address
+-- ----------------------------
+DROP TABLE IF EXISTS `address`;
+CREATE TABLE `address` (
+  `address_id` varchar(36) CHARACTER SET utf8mb4 NOT NULL,
+  `mj_basic_id` varchar(36) CHARACTER SET utf8mb4 NOT NULL COMMENT '买家id',
+  `receiver_name` varchar(20) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '收货人姓名',
+  `receiver_phone` varchar(20) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '收货人联系方式',
+  `receiver_address` varchar(128) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '收货地址',
+  `code_a` varchar(15) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '所在地区编码',
+  `is_default` tinyint(4) DEFAULT '0' COMMENT '是否是默认地址（0：否，1：是）',
+  PRIMARY KEY (`address_id`),
+  KEY `mj_basic_id` (`mj_basic_id`),
+  KEY `code_a` (`code_a`),
+  CONSTRAINT `address_ibfk_1` FOREIGN KEY (`mj_basic_id`) REFERENCES `mj_basic` (`mj_basic_id`),
+  CONSTRAINT `address_ibfk_2` FOREIGN KEY (`code_a`) REFERENCES `area` (`code_a`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of address
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for area
@@ -3164,6 +3187,24 @@ INSERT INTO `area` VALUES ('3129', '659004', '五家渠市', '659000');
 INSERT INTO `area` VALUES ('3130', '659006', '铁门关市', '659000');
 
 -- ----------------------------
+-- Table structure for cart
+-- ----------------------------
+DROP TABLE IF EXISTS `cart`;
+CREATE TABLE `cart` (
+  `cart_id` varchar(36) CHARACTER SET utf8mb4 NOT NULL,
+  `mj_basic_id` varchar(36) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `goods_id` varchar(36) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `goods_title` varchar(200) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `goods_num` int(11) DEFAULT '1' COMMENT '商品数量',
+  `goods_pic` varchar(2000) CHARACTER SET utf8mb4 DEFAULT NULL,
+  PRIMARY KEY (`cart_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='购物车';
+
+-- ----------------------------
+-- Records of cart
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for category1
 -- ----------------------------
 DROP TABLE IF EXISTS `category1`;
@@ -3203,7 +3244,7 @@ CREATE TABLE `category2` (
   KEY `ccode` (`c2_code`),
   KEY `category2_category1_check` (`f2_code`),
   CONSTRAINT `category2_fk_1` FOREIGN KEY (`f2_code`) REFERENCES `category1` (`c1_code`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of category2
@@ -3288,7 +3329,7 @@ CREATE TABLE `category3` (
   KEY `ccode` (`c3_code`),
   KEY `category3_category2_check` (`f3_code`),
   CONSTRAINT `category3_fk_1` FOREIGN KEY (`f3_code`) REFERENCES `category2` (`c2_code`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=408 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=347 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of category3
@@ -4003,6 +4044,26 @@ INSERT INTO `city` VALUES ('343', '654300', '阿勒泰地区', '650000');
 INSERT INTO `city` VALUES ('344', '659000', '自治区直辖县级行政区划', '650000');
 
 -- ----------------------------
+-- Table structure for comment
+-- ----------------------------
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment` (
+  `comment_id` varchar(36) NOT NULL,
+  `goods_id` varchar(36) DEFAULT NULL COMMENT '商品id',
+  `mj_basic_id` varchar(36) DEFAULT NULL,
+  `type` tinyint(4) DEFAULT '2' COMMENT '评价类型：（0：差评，1：中评，2：好评）',
+  `content` varchar(255) DEFAULT NULL COMMENT '评论内容',
+  `created` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`comment_id`),
+  KEY `comment_key_1` (`goods_id`) USING BTREE,
+  KEY `comment_key_2` (`mj_basic_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of comment
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mj_basic
 -- ----------------------------
 DROP TABLE IF EXISTS `mj_basic`;
@@ -4027,10 +4088,22 @@ CREATE TABLE `mj_basic` (
 -- ----------------------------
 DROP TABLE IF EXISTS `mj_more`;
 CREATE TABLE `mj_more` (
-  `id` varchar(36) NOT NULL,
-  `mj_id` varchar(36) NOT NULL COMMENT '买家id',
-  UNIQUE KEY `uqe_mj_id` (`mj_id`),
-  CONSTRAINT `mj_more_ibfk_1` FOREIGN KEY (`mj_id`) REFERENCES `mj_basic` (`mj_basic_id`)
+  `mj_more_id` varchar(36) NOT NULL,
+  `mj_basic_id` varchar(36) NOT NULL COMMENT '买家id',
+  `mj_real_name` varchar(64) NOT NULL COMMENT '姓名',
+  `mj_id_card` varchar(64) NOT NULL COMMENT '身份证',
+  `mj_sex` varchar(6) NOT NULL COMMENT '性别',
+  `mj_pay_password` varchar(255) NOT NULL COMMENT '支付密码',
+  `mj_pay_salt` varchar(255) NOT NULL,
+  `mj_status` tinyint(4) DEFAULT '0' COMMENT '0未审核 1审核成功 2审核失败',
+  `mj_origin` varchar(64) NOT NULL COMMENT '籍贯',
+  `mj_nation` varchar(32) NOT NULL COMMENT '民族',
+  `mj_politics` varchar(32) NOT NULL COMMENT '政治面貌',
+  `mj_A_Code` varchar(255) NOT NULL,
+  UNIQUE KEY `uqe_mj_id` (`mj_basic_id`),
+  KEY `mj_A_Code` (`mj_A_Code`),
+  CONSTRAINT `mj_more_ibfk_1` FOREIGN KEY (`mj_basic_id`) REFERENCES `mj_basic` (`mj_basic_id`),
+  CONSTRAINT `mj_more_ibfk_2` FOREIGN KEY (`mj_A_Code`) REFERENCES `area` (`code_a`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -4051,9 +4124,11 @@ CREATE TABLE `ncp_basic` (
   `nh_basic_id` varchar(36) NOT NULL,
   `ncp_feature` varchar(255) NOT NULL COMMENT '产品特质',
   `ncp_brand` varchar(64) DEFAULT NULL COMMENT '农产品品牌',
-  `ncp_annual_output` varchar(64) DEFAULT NULL COMMENT '年产量 如:苹果300吨',
-  `ncp_supply_amount` varchar(64) DEFAULT NULL COMMENT '可供应量 如：苹果300吨',
-  `ncp_reference_price` varchar(32) DEFAULT NULL COMMENT '产品参考价格（如：几元/几千克） ',
+  `ncp_supply_amount` decimal(10,2) NOT NULL COMMENT '可供应量 如：苹果300吨',
+  `supplyUnit` varchar(6) NOT NULL COMMENT '供应量单位',
+  `ncp_price` decimal(10,2) NOT NULL,
+  `price_unit` varchar(6) NOT NULL,
+  `ncp_status` tinyint(3) DEFAULT '0' COMMENT '0下架 1上架',
   PRIMARY KEY (`ncp_basic_id`),
   KEY `p_id` (`ncp_p_code`),
   KEY `ncp_area_code` (`ncp_area_code`),
@@ -4076,17 +4151,16 @@ CREATE TABLE `ncp_more` (
   `ncp_basic_id` varchar(36) NOT NULL,
   `ncp_detail` text COMMENT '农产品详情介绍',
   `ncp_package` varchar(16) DEFAULT NULL COMMENT '包装方式',
-  `ncp_quality` char(5) DEFAULT '5' COMMENT '品质认证(1:绿色食品认证    2:有机食品认证    3:无公害农产品认证    4:国家地理标志认证    5:其它)',
+  `ncp_quality` varchar(32) DEFAULT '5' COMMENT '品质认证(1:绿色食品认证    2:有机食品认证    3:无公害农产品认证    4:国家地理标志认证    5:其它)',
   `ncp_delivery_info` text COMMENT '存储物流情况:县域内运输，县域内仓储，县域内包装／从县到大城市的远程运输／全国运输等等（请如实填写)',
   `ncp_growth_info` text COMMENT '生产过程（如：种子、机械、化肥、农药、如何控制农药残留等，请尽量详细填写）',
   `ncp_growth_surrounding` text COMMENT '产品生长环境 ',
-  `ncp_plant_area` varchar(255) DEFAULT NULL COMMENT '产品种植面积(如:苹果300亩)',
-  `ncp_batch_price` varchar(32) DEFAULT NULL COMMENT '批量出仓价格（如：出仓100斤，xx元）',
+  `ncp_plant_area` decimal(10,2) DEFAULT NULL COMMENT '产品种植面积(如:苹果300亩)',
   `ncp_supply_period_start` date DEFAULT NULL COMMENT '产品供应期（几月份—几月份）',
   `ncp_delivery_ability` text COMMENT '仓储物流能力',
-  `ncp_min_count` varchar(64) DEFAULT NULL COMMENT '起送量',
-  `ncp_delivery_cost` varchar(32) DEFAULT NULL COMMENT '批量物流成本',
   `ncp_supply_period_end` date DEFAULT NULL,
+  `plantUnit` varchar(6) DEFAULT NULL COMMENT '产品种植面积单位',
+  `ncp_img` varchar(512) DEFAULT NULL,
   PRIMARY KEY (`ncp_more_id`),
   UNIQUE KEY `uqe_ncp_id` (`ncp_basic_id`),
   CONSTRAINT `ncp_more_fk_1` FOREIGN KEY (`ncp_basic_id`) REFERENCES `ncp_basic` (`ncp_basic_id`)
@@ -4111,6 +4185,10 @@ CREATE TABLE `nh_basic` (
   PRIMARY KEY (`nh_basic_id`),
   UNIQUE KEY `uqe_nh_telephone` (`nh_telephone`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of nh_basic
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for nh_more
@@ -4143,6 +4221,20 @@ CREATE TABLE `nh_more` (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for orderinfo
+-- ----------------------------
+DROP TABLE IF EXISTS `orderinfo`;
+CREATE TABLE `orderinfo` (
+  `order_id` varchar(36) CHARACTER SET utf8mb4 NOT NULL,
+  `address_id` varchar(36) NOT NULL,
+  PRIMARY KEY (`order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of orderinfo
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for product
 -- ----------------------------
 DROP TABLE IF EXISTS `product`;
@@ -4155,7 +4247,7 @@ CREATE TABLE `product` (
   KEY `product_category3_check` (`f_code`),
   KEY `pcode` (`p_code`),
   CONSTRAINT `product_fk_1` FOREIGN KEY (`f_code`) REFERENCES `category3` (`c3_code`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1185 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1020 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of product
@@ -5239,7 +5331,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- View structure for ncp_view
 -- ----------------------------
 DROP VIEW IF EXISTS `ncp_view`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `ncp_view` AS select `ncp_basic`.`ncp_basic_id` AS `ncp_basic_id`,`ncp_basic`.`ncp_name` AS `ncp_name`,`ncp_basic`.`ncp_publish_date` AS `ncp_publish_date`,`ncp_basic`.`ncp_p_code` AS `ncp_p_code`,`ncp_basic`.`ncp_area_code` AS `ncp_area_code`,`ncp_basic`.`ncp_address` AS `ncp_address`,`ncp_basic`.`nh_basic_id` AS `nh_basic_id`,`ncp_basic`.`ncp_feature` AS `ncp_feature`,`ncp_basic`.`ncp_brand` AS `ncp_brand`,`ncp_basic`.`ncp_annual_output` AS `ncp_annual_output`,`ncp_basic`.`ncp_supply_amount` AS `ncp_supply_amount`,`ncp_basic`.`ncp_reference_price` AS `ncp_reference_price`,`ncp_more`.`ncp_more_id` AS `ncp_more_id`,`ncp_more`.`ncp_detail` AS `ncp_detail`,`ncp_more`.`ncp_package` AS `ncp_package`,`ncp_more`.`ncp_quality` AS `ncp_quality`,`ncp_more`.`ncp_delivery_info` AS `ncp_delivery_info`,`ncp_more`.`ncp_growth_info` AS `ncp_growth_info`,`ncp_more`.`ncp_growth_surrounding` AS `ncp_growth_surrounding`,`ncp_more`.`ncp_plant_area` AS `ncp_plant_area`,`ncp_more`.`ncp_batch_price` AS `ncp_batch_price`,`ncp_more`.`ncp_supply_period_start` AS `ncp_supply_period_start`,`ncp_more`.`ncp_delivery_ability` AS `ncp_delivery_ability`,`ncp_more`.`ncp_min_count` AS `ncp_min_count`,`ncp_more`.`ncp_delivery_cost` AS `ncp_delivery_cost`,`ncp_more`.`ncp_supply_period_end` AS `ncp_supply_period_end` from (`ncp_basic` join `ncp_more` on((`ncp_more`.`ncp_basic_id` = `ncp_basic`.`ncp_basic_id`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `ncp_view` AS select `ncp_basic`.`ncp_basic_id` AS `ncp_basic_id`,`ncp_basic`.`ncp_name` AS `ncp_name`,`ncp_basic`.`ncp_publish_date` AS `ncp_publish_date`,`ncp_basic`.`ncp_p_code` AS `ncp_p_code`,`ncp_basic`.`ncp_area_code` AS `ncp_area_code`,`ncp_basic`.`ncp_address` AS `ncp_address`,`ncp_basic`.`nh_basic_id` AS `nh_basic_id`,`ncp_basic`.`ncp_feature` AS `ncp_feature`,`ncp_basic`.`ncp_brand` AS `ncp_brand`,`ncp_basic`.`ncp_supply_amount` AS `ncp_supply_amount`,`ncp_basic`.`supplyUnit` AS `supplyUnit`,`ncp_more`.`ncp_more_id` AS `ncp_more_id`,`ncp_more`.`ncp_detail` AS `ncp_detail`,`ncp_more`.`ncp_package` AS `ncp_package`,`ncp_more`.`ncp_quality` AS `ncp_quality`,`ncp_more`.`ncp_delivery_info` AS `ncp_delivery_info`,`ncp_more`.`ncp_growth_info` AS `ncp_growth_info`,`ncp_more`.`ncp_growth_surrounding` AS `ncp_growth_surrounding`,`ncp_more`.`ncp_plant_area` AS `ncp_plant_area`,`ncp_more`.`ncp_supply_period_start` AS `ncp_supply_period_start`,`ncp_more`.`ncp_delivery_ability` AS `ncp_delivery_ability`,`ncp_more`.`ncp_supply_period_end` AS `ncp_supply_period_end`,`ncp_more`.`plantUnit` AS `plantUnit`,`area`.`name_a` AS `name_a`,`city`.`name_c` AS `name_c`,`province`.`name_p` AS `name_p` from ((((`ncp_basic` join `ncp_more` on((`ncp_more`.`ncp_basic_id` = `ncp_basic`.`ncp_basic_id`))) join `area` on((`ncp_basic`.`ncp_area_code` = `area`.`code_a`))) join `city` on((`area`.`code_c` = `city`.`code_c`))) join `province` on((`city`.`code_p` = `province`.`code_p`))) ;
 
 -- ----------------------------
 -- View structure for nh_view
