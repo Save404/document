@@ -10,33 +10,10 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2018-06-08 22:25:57
+Date: 2018-06-12 16:06:27
 */
 
 SET FOREIGN_KEY_CHECKS=0;
-
--- ----------------------------
--- Table structure for address
--- ----------------------------
-DROP TABLE IF EXISTS `address`;
-CREATE TABLE `address` (
-  `address_id` varchar(36) CHARACTER SET utf8mb4 NOT NULL,
-  `mj_basic_id` varchar(36) CHARACTER SET utf8mb4 NOT NULL COMMENT '买家id',
-  `receiver_name` varchar(20) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '收货人姓名',
-  `receiver_phone` varchar(20) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '收货人联系方式',
-  `receiver_address` varchar(128) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '收货地址',
-  `code_a` varchar(15) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '所在地区编码',
-  `is_default` tinyint(4) DEFAULT '0' COMMENT '是否是默认地址（0：否，1：是）',
-  PRIMARY KEY (`address_id`),
-  KEY `mj_basic_id` (`mj_basic_id`),
-  KEY `code_a` (`code_a`),
-  CONSTRAINT `address_ibfk_1` FOREIGN KEY (`mj_basic_id`) REFERENCES `mj_basic` (`mj_basic_id`),
-  CONSTRAINT `address_ibfk_2` FOREIGN KEY (`code_a`) REFERENCES `area` (`code_a`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of address
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for area
@@ -3187,24 +3164,6 @@ INSERT INTO `area` VALUES ('3129', '659004', '五家渠市', '659000');
 INSERT INTO `area` VALUES ('3130', '659006', '铁门关市', '659000');
 
 -- ----------------------------
--- Table structure for cart
--- ----------------------------
-DROP TABLE IF EXISTS `cart`;
-CREATE TABLE `cart` (
-  `cart_id` varchar(36) CHARACTER SET utf8mb4 NOT NULL,
-  `mj_basic_id` varchar(36) CHARACTER SET utf8mb4 DEFAULT NULL,
-  `goods_id` varchar(36) CHARACTER SET utf8mb4 DEFAULT NULL,
-  `goods_title` varchar(200) CHARACTER SET utf8mb4 DEFAULT NULL,
-  `goods_num` int(11) DEFAULT '1' COMMENT '商品数量',
-  `goods_pic` varchar(2000) CHARACTER SET utf8mb4 DEFAULT NULL,
-  PRIMARY KEY (`cart_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='购物车';
-
--- ----------------------------
--- Records of cart
--- ----------------------------
-
--- ----------------------------
 -- Table structure for category1
 -- ----------------------------
 DROP TABLE IF EXISTS `category1`;
@@ -4044,26 +4003,6 @@ INSERT INTO `city` VALUES ('343', '654300', '阿勒泰地区', '650000');
 INSERT INTO `city` VALUES ('344', '659000', '自治区直辖县级行政区划', '650000');
 
 -- ----------------------------
--- Table structure for comment
--- ----------------------------
-DROP TABLE IF EXISTS `comment`;
-CREATE TABLE `comment` (
-  `comment_id` varchar(36) NOT NULL,
-  `goods_id` varchar(36) DEFAULT NULL COMMENT '商品id',
-  `mj_basic_id` varchar(36) DEFAULT NULL,
-  `type` tinyint(4) DEFAULT '2' COMMENT '评价类型：（0：差评，1：中评，2：好评）',
-  `content` varchar(255) DEFAULT NULL COMMENT '评论内容',
-  `created` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`comment_id`),
-  KEY `comment_key_1` (`goods_id`) USING BTREE,
-  KEY `comment_key_2` (`mj_basic_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of comment
--- ----------------------------
-
--- ----------------------------
 -- Table structure for mj_basic
 -- ----------------------------
 DROP TABLE IF EXISTS `mj_basic`;
@@ -4093,8 +4032,8 @@ CREATE TABLE `mj_more` (
   `mj_real_name` varchar(64) NOT NULL COMMENT '姓名',
   `mj_id_card` varchar(64) NOT NULL COMMENT '身份证',
   `mj_sex` varchar(6) NOT NULL COMMENT '性别',
-  `mj_pay_password` varchar(255) NOT NULL COMMENT '支付密码',
-  `mj_pay_salt` varchar(255) NOT NULL,
+  `mj_pay_password` varchar(255) DEFAULT NULL COMMENT '支付密码',
+  `mj_pay_salt` varchar(255) DEFAULT NULL,
   `mj_status` tinyint(4) DEFAULT '0' COMMENT '0未审核 1审核成功 2审核失败',
   `mj_origin` varchar(64) NOT NULL COMMENT '籍贯',
   `mj_nation` varchar(32) NOT NULL COMMENT '民族',
@@ -4125,7 +4064,7 @@ CREATE TABLE `ncp_basic` (
   `ncp_feature` varchar(255) NOT NULL COMMENT '产品特质',
   `ncp_brand` varchar(64) DEFAULT NULL COMMENT '农产品品牌',
   `ncp_supply_amount` decimal(10,2) NOT NULL COMMENT '可供应量 如：苹果300吨',
-  `supplyUnit` varchar(6) NOT NULL COMMENT '供应量单位',
+  `supply_unit` varchar(6) NOT NULL COMMENT '供应量单位',
   `ncp_price` decimal(10,2) NOT NULL,
   `price_unit` varchar(6) NOT NULL,
   `ncp_status` tinyint(3) DEFAULT '0' COMMENT '0下架 1上架',
@@ -4159,7 +4098,7 @@ CREATE TABLE `ncp_more` (
   `ncp_supply_period_start` date DEFAULT NULL COMMENT '产品供应期（几月份—几月份）',
   `ncp_delivery_ability` text COMMENT '仓储物流能力',
   `ncp_supply_period_end` date DEFAULT NULL,
-  `plantUnit` varchar(6) DEFAULT NULL COMMENT '产品种植面积单位',
+  `plant_unit` varchar(6) DEFAULT NULL COMMENT '产品种植面积单位',
   `ncp_img` varchar(512) DEFAULT NULL,
   PRIMARY KEY (`ncp_more_id`),
   UNIQUE KEY `uqe_ncp_id` (`ncp_basic_id`),
@@ -4199,9 +4138,9 @@ CREATE TABLE `nh_more` (
   `nh_basic_id` varchar(36) NOT NULL COMMENT '农户ID',
   `nh_real_name` varchar(16) NOT NULL COMMENT '真实姓名',
   `nh_id_card` char(18) NOT NULL COMMENT '身份证',
-  `nh_ghdw_address` varchar(255) DEFAULT NULL COMMENT '供货单位地址',
+  `nh_ghdw_address` varchar(255) NOT NULL COMMENT '供货单位地址',
   `nh_ghdw_area_code` varchar(15) NOT NULL COMMENT '供货单位所在地区编码',
-  `nh_ghdw_phone` varchar(13) DEFAULT NULL COMMENT '供货单位联系方式(手机或座机)',
+  `nh_ghdw_phone` varchar(13) NOT NULL COMMENT '供货单位联系方式(手机或座机)',
   `nh_pay_password` varchar(255) DEFAULT NULL COMMENT '支付密码:MD5(MD5(pass明文 + 固定salt) + salt)',
   `nh_pay_salt` varchar(64) DEFAULT NULL,
   `nh_status` tinyint(4) DEFAULT '0' COMMENT '0未审核 1审核成功 2审核失败',
@@ -4218,20 +4157,6 @@ CREATE TABLE `nh_more` (
 
 -- ----------------------------
 -- Records of nh_more
--- ----------------------------
-
--- ----------------------------
--- Table structure for orderinfo
--- ----------------------------
-DROP TABLE IF EXISTS `orderinfo`;
-CREATE TABLE `orderinfo` (
-  `order_id` varchar(36) CHARACTER SET utf8mb4 NOT NULL,
-  `address_id` varchar(36) NOT NULL,
-  PRIMARY KEY (`order_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of orderinfo
 -- ----------------------------
 
 -- ----------------------------
@@ -5331,7 +5256,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- View structure for ncp_view
 -- ----------------------------
 DROP VIEW IF EXISTS `ncp_view`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `ncp_view` AS select `ncp_basic`.`ncp_basic_id` AS `ncp_basic_id`,`ncp_basic`.`ncp_name` AS `ncp_name`,`ncp_basic`.`ncp_publish_date` AS `ncp_publish_date`,`ncp_basic`.`ncp_p_code` AS `ncp_p_code`,`ncp_basic`.`ncp_area_code` AS `ncp_area_code`,`ncp_basic`.`ncp_address` AS `ncp_address`,`ncp_basic`.`nh_basic_id` AS `nh_basic_id`,`ncp_basic`.`ncp_feature` AS `ncp_feature`,`ncp_basic`.`ncp_brand` AS `ncp_brand`,`ncp_basic`.`ncp_supply_amount` AS `ncp_supply_amount`,`ncp_basic`.`supplyUnit` AS `supplyUnit`,`ncp_more`.`ncp_more_id` AS `ncp_more_id`,`ncp_more`.`ncp_detail` AS `ncp_detail`,`ncp_more`.`ncp_package` AS `ncp_package`,`ncp_more`.`ncp_quality` AS `ncp_quality`,`ncp_more`.`ncp_delivery_info` AS `ncp_delivery_info`,`ncp_more`.`ncp_growth_info` AS `ncp_growth_info`,`ncp_more`.`ncp_growth_surrounding` AS `ncp_growth_surrounding`,`ncp_more`.`ncp_plant_area` AS `ncp_plant_area`,`ncp_more`.`ncp_supply_period_start` AS `ncp_supply_period_start`,`ncp_more`.`ncp_delivery_ability` AS `ncp_delivery_ability`,`ncp_more`.`ncp_supply_period_end` AS `ncp_supply_period_end`,`ncp_more`.`plantUnit` AS `plantUnit`,`area`.`name_a` AS `name_a`,`city`.`name_c` AS `name_c`,`province`.`name_p` AS `name_p` from ((((`ncp_basic` join `ncp_more` on((`ncp_more`.`ncp_basic_id` = `ncp_basic`.`ncp_basic_id`))) join `area` on((`ncp_basic`.`ncp_area_code` = `area`.`code_a`))) join `city` on((`area`.`code_c` = `city`.`code_c`))) join `province` on((`city`.`code_p` = `province`.`code_p`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `ncp_view` AS select `ncp_basic`.`ncp_basic_id` AS `ncp_basic_id`,`ncp_basic`.`ncp_name` AS `ncp_name`,`ncp_basic`.`ncp_publish_date` AS `ncp_publish_date`,`ncp_basic`.`ncp_p_code` AS `ncp_p_code`,`ncp_basic`.`ncp_area_code` AS `ncp_area_code`,`ncp_basic`.`ncp_address` AS `ncp_address`,`ncp_basic`.`ncp_feature` AS `ncp_feature`,`ncp_basic`.`ncp_brand` AS `ncp_brand`,`ncp_basic`.`ncp_supply_amount` AS `ncp_supply_amount`,`ncp_basic`.`supply_unit` AS `supply_unit`,`ncp_basic`.`ncp_price` AS `ncp_price`,`ncp_basic`.`price_unit` AS `price_unit`,`ncp_basic`.`ncp_status` AS `ncp_status`,`ncp_more`.`ncp_detail` AS `ncp_detail`,`ncp_more`.`ncp_package` AS `ncp_package`,`ncp_more`.`ncp_quality` AS `ncp_quality`,`ncp_more`.`ncp_delivery_info` AS `ncp_delivery_info`,`ncp_more`.`ncp_growth_info` AS `ncp_growth_info`,`ncp_more`.`ncp_growth_surrounding` AS `ncp_growth_surrounding`,`ncp_more`.`ncp_plant_area` AS `ncp_plant_area`,`ncp_more`.`ncp_supply_period_start` AS `ncp_supply_period_start`,`ncp_more`.`ncp_delivery_ability` AS `ncp_delivery_ability`,`ncp_more`.`ncp_supply_period_end` AS `ncp_supply_period_end`,`ncp_more`.`plant_unit` AS `plant_unit`,`ncp_more`.`ncp_img` AS `ncp_img`,`ncp_basic`.`nh_basic_id` AS `nh_basic_id` from (`ncp_more` join `ncp_basic` on((`ncp_more`.`ncp_basic_id` = `ncp_basic`.`ncp_basic_id`))) ;
 
 -- ----------------------------
 -- View structure for nh_view
