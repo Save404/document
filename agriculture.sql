@@ -10,7 +10,11 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
+<<<<<<< HEAD
 Date: 2018-06-12 16:06:27
+=======
+Date: 2018-06-10 20:53:35
+>>>>>>> 84e59c91a14c3ab0ee2cf3157182f782dbdb28e5
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -5256,7 +5260,11 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- View structure for ncp_view
 -- ----------------------------
 DROP VIEW IF EXISTS `ncp_view`;
+<<<<<<< HEAD
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `ncp_view` AS select `ncp_basic`.`ncp_basic_id` AS `ncp_basic_id`,`ncp_basic`.`ncp_name` AS `ncp_name`,`ncp_basic`.`ncp_publish_date` AS `ncp_publish_date`,`ncp_basic`.`ncp_p_code` AS `ncp_p_code`,`ncp_basic`.`ncp_area_code` AS `ncp_area_code`,`ncp_basic`.`ncp_address` AS `ncp_address`,`ncp_basic`.`ncp_feature` AS `ncp_feature`,`ncp_basic`.`ncp_brand` AS `ncp_brand`,`ncp_basic`.`ncp_supply_amount` AS `ncp_supply_amount`,`ncp_basic`.`supply_unit` AS `supply_unit`,`ncp_basic`.`ncp_price` AS `ncp_price`,`ncp_basic`.`price_unit` AS `price_unit`,`ncp_basic`.`ncp_status` AS `ncp_status`,`ncp_more`.`ncp_detail` AS `ncp_detail`,`ncp_more`.`ncp_package` AS `ncp_package`,`ncp_more`.`ncp_quality` AS `ncp_quality`,`ncp_more`.`ncp_delivery_info` AS `ncp_delivery_info`,`ncp_more`.`ncp_growth_info` AS `ncp_growth_info`,`ncp_more`.`ncp_growth_surrounding` AS `ncp_growth_surrounding`,`ncp_more`.`ncp_plant_area` AS `ncp_plant_area`,`ncp_more`.`ncp_supply_period_start` AS `ncp_supply_period_start`,`ncp_more`.`ncp_delivery_ability` AS `ncp_delivery_ability`,`ncp_more`.`ncp_supply_period_end` AS `ncp_supply_period_end`,`ncp_more`.`plant_unit` AS `plant_unit`,`ncp_more`.`ncp_img` AS `ncp_img`,`ncp_basic`.`nh_basic_id` AS `nh_basic_id` from (`ncp_more` join `ncp_basic` on((`ncp_more`.`ncp_basic_id` = `ncp_basic`.`ncp_basic_id`))) ;
+=======
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `ncp_view` AS select `ncp_basic`.`ncp_basic_id` AS `ncp_basic_id`,`ncp_basic`.`ncp_name` AS `ncp_name`,`ncp_basic`.`ncp_publish_date` AS `ncp_publish_date`,`ncp_basic`.`ncp_p_code` AS `ncp_p_code`,`ncp_basic`.`ncp_area_code` AS `ncp_area_code`,`ncp_basic`.`ncp_address` AS `ncp_address`,`ncp_basic`.`nh_basic_id` AS `nh_basic_id`,`ncp_basic`.`ncp_feature` AS `ncp_feature`,`ncp_basic`.`ncp_brand` AS `ncp_brand`,`ncp_basic`.`ncp_supply_amount` AS `ncp_supply_amount`,`ncp_basic`.`supplyUnit` AS `supplyUnit`,`ncp_more`.`ncp_more_id` AS `ncp_more_id`,`ncp_more`.`ncp_detail` AS `ncp_detail`,`ncp_more`.`ncp_package` AS `ncp_package`,`ncp_more`.`ncp_quality` AS `ncp_quality`,`ncp_more`.`ncp_delivery_info` AS `ncp_delivery_info`,`ncp_more`.`ncp_growth_info` AS `ncp_growth_info`,`ncp_more`.`ncp_growth_surrounding` AS `ncp_growth_surrounding`,`ncp_more`.`ncp_plant_area` AS `ncp_plant_area`,`ncp_more`.`ncp_supply_period_start` AS `ncp_supply_period_start`,`ncp_more`.`ncp_delivery_ability` AS `ncp_delivery_ability`,`ncp_more`.`ncp_supply_period_end` AS `ncp_supply_period_end`,`ncp_more`.`plantUnit` AS `plantUnit`,`area`.`name_a` AS `name_a`,`city`.`name_c` AS `name_c`,`province`.`name_p` AS `name_p`,`ncp_basic`.`ncp_price` AS `ncp_price`,`ncp_basic`.`price_unit` AS `price_unit`,`ncp_basic`.`ncp_status` AS `ncp_status`,`ncp_more`.`ncp_img` AS `ncp_img` from ((((`ncp_basic` join `ncp_more` on((`ncp_more`.`ncp_basic_id` = `ncp_basic`.`ncp_basic_id`))) join `area` on((`ncp_basic`.`ncp_area_code` = `area`.`code_a`))) join `city` on((`area`.`code_c` = `city`.`code_c`))) join `province` on((`city`.`code_p` = `province`.`code_p`))) ;
+>>>>>>> 84e59c91a14c3ab0ee2cf3157182f782dbdb28e5
 
 -- ----------------------------
 -- View structure for nh_view
