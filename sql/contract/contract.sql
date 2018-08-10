@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2018-08-01 18:06:15
+Date: 2018-08-08 14:18:55
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -37,6 +37,9 @@ CREATE TABLE `contract` (
   `receiving_address` varchar(64) CHARACTER SET utf8mb4 NOT NULL COMMENT '收货地址',
   `pre_payment` decimal(8,2) DEFAULT NULL COMMENT '预支付',
   `pay_statu` tinyint(2) DEFAULT '0' COMMENT '支付状态(0:待支付 1:已支付)',
+  `title` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `mj_telephone` varchar(13) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `nh_telephone` varchar(13) CHARACTER SET utf8mb4 DEFAULT NULL,
   PRIMARY KEY (`contract_id`),
   KEY `nh_basic_id` (`nh_basic_id`),
   KEY `mj_basic_id` (`mj_basic_id`)
