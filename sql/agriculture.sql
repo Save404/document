@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost_3306
-Source Server Version : 50717
+Source Server         : LLT
+Source Server Version : 50722
 Source Host           : localhost:3306
 Source Database       : agriculture
 
 Target Server Type    : MYSQL
-Target Server Version : 50717
+Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2018-06-12 16:06:27
+Date: 2018-08-28 00:24:14
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -4003,6 +4003,98 @@ INSERT INTO `city` VALUES ('343', '654300', '阿勒泰地区', '650000');
 INSERT INTO `city` VALUES ('344', '659000', '自治区直辖县级行政区划', '650000');
 
 -- ----------------------------
+-- Table structure for contract
+-- ----------------------------
+DROP TABLE IF EXISTS `contract`;
+CREATE TABLE `contract` (
+  `contract_id` varchar(24) CHARACTER SET utf8mb4 NOT NULL,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `nh_basic_id` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
+  `mj_basic_id` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
+  `ncp_basic_id` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
+  `purchaser_name` varchar(16) CHARACTER SET utf8mb4 NOT NULL COMMENT '求购方姓名',
+  `sales_name` varchar(16) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '销售方姓名',
+  `alipay_account` varchar(32) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `purchase_quantity` decimal(8,2) NOT NULL COMMENT '购买数量',
+  `purchase_unit` varchar(4) CHARACTER SET utf8mb4 NOT NULL COMMENT '单位',
+  `purchase_price` decimal(10,2) DEFAULT NULL COMMENT '总价',
+  `sales_liquidated_damages` decimal(8,2) NOT NULL COMMENT '销售方违约金',
+  `purchases_liquidated_damages` decimal(8,2) DEFAULT NULL COMMENT '购买方违约金',
+  `statu` tinyint(2) DEFAULT '0' COMMENT '合同状态(0:初始化 1:同意销售 2.取消订单 3:等待收货 4:订单完成)',
+  `receiving_address` varchar(64) CHARACTER SET utf8mb4 NOT NULL COMMENT '收货地址',
+  `pre_payment` decimal(8,2) DEFAULT NULL COMMENT '预支付',
+  `pay_statu` tinyint(2) DEFAULT '0' COMMENT '支付状态(0:待支付 1:已支付)',
+  `title` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `mj_telephone` varchar(13) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `nh_telephone` varchar(13) CHARACTER SET utf8mb4 DEFAULT NULL,
+  PRIMARY KEY (`contract_id`),
+  KEY `nh_basic_id` (`nh_basic_id`),
+  KEY `mj_basic_id` (`mj_basic_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of contract
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for gov
+-- ----------------------------
+DROP TABLE IF EXISTS `gov`;
+CREATE TABLE `gov` (
+  `gov_id` varchar(36) NOT NULL,
+  `gov_account` char(12) NOT NULL COMMENT '登录账号（6位地区编码+6位数字）',
+  `gov_password` varchar(255) NOT NULL COMMENT 'MD5(MD5(pass明文 + 固定salt) + salt)',
+  `gov_name` varchar(32) NOT NULL COMMENT '真实姓名',
+  `gov_department_id` int(11) NOT NULL COMMENT '政府单位名称',
+  `gov_salt` varchar(64) NOT NULL,
+  `gov_register_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `gov_last_login_date` datetime DEFAULT NULL,
+  `gov_login_count` int(11) DEFAULT NULL,
+  PRIMARY KEY (`gov_id`),
+  UNIQUE KEY `gov_key_1` (`gov_account`) USING HASH,
+  KEY `gov_fk_01` (`gov_department_id`),
+  CONSTRAINT `gov_fk_01` FOREIGN KEY (`gov_department_id`) REFERENCES `gov_department` (`department_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of gov
+-- ----------------------------
+INSERT INTO `gov` VALUES ('1', 'admin', 'admin', 'admin', '1', '1', '2018-08-26 20:45:29', null, null);
+
+-- ----------------------------
+-- Table structure for gov_department
+-- ----------------------------
+DROP TABLE IF EXISTS `gov_department`;
+CREATE TABLE `gov_department` (
+  `department_id` int(11) NOT NULL AUTO_INCREMENT,
+  `area_code` char(6) DEFAULT NULL COMMENT '政府部门管理地区的编码(管理部门分为国省市县，国家编码为000000，省市县编码和数据表一致)',
+  `department_name` varchar(256) DEFAULT NULL COMMENT '政府部门名称',
+  PRIMARY KEY (`department_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of gov_department
+-- ----------------------------
+INSERT INTO `gov_department` VALUES ('1', '330185', '临安农业部');
+
+-- ----------------------------
+-- Table structure for gov_pmsn
+-- ----------------------------
+DROP TABLE IF EXISTS `gov_pmsn`;
+CREATE TABLE `gov_pmsn` (
+  `gov_id` varchar(36) NOT NULL,
+  `pmsn_id` int(11) NOT NULL,
+  PRIMARY KEY (`gov_id`,`pmsn_id`),
+  KEY `gov_pmsn_fk_2` (`pmsn_id`),
+  CONSTRAINT `gov_pmsn_fk_1` FOREIGN KEY (`gov_id`) REFERENCES `gov` (`gov_id`),
+  CONSTRAINT `gov_pmsn_fk_2` FOREIGN KEY (`pmsn_id`) REFERENCES `permission` (`pmsn_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of gov_pmsn
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mj_basic
 -- ----------------------------
 DROP TABLE IF EXISTS `mj_basic`;
@@ -4021,6 +4113,7 @@ CREATE TABLE `mj_basic` (
 -- ----------------------------
 -- Records of mj_basic
 -- ----------------------------
+INSERT INTO `mj_basic` VALUES ('fff2dc2dedc1455cabd35b4f6c64b917', '17367077253', '507415002781b41e1b4f3531480ef595', 'jvfdgbfs', '2018-08-26 23:02:25', null, '0');
 
 -- ----------------------------
 -- Table structure for mj_more
@@ -4047,6 +4140,25 @@ CREATE TABLE `mj_more` (
 
 -- ----------------------------
 -- Records of mj_more
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for mj_purchases
+-- ----------------------------
+DROP TABLE IF EXISTS `mj_purchases`;
+CREATE TABLE `mj_purchases` (
+  `mj_purchases_id` varchar(24) CHARACTER SET utf8mb4 NOT NULL,
+  `mj_basic_id` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
+  `title` varchar(32) NOT NULL,
+  `content` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
+  `create_date` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `telephone` varchar(255) NOT NULL,
+  `level` int(2) DEFAULT '0',
+  `statu` tinyint(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of mj_purchases
 -- ----------------------------
 
 -- ----------------------------
@@ -4080,6 +4192,7 @@ CREATE TABLE `ncp_basic` (
 -- ----------------------------
 -- Records of ncp_basic
 -- ----------------------------
+INSERT INTO `ncp_basic` VALUES ('bc0fa64f12b74cb3a1b0f05fd32b5463', '生乳', '2018-08-26 23:04:29', '0801010000000', '330185', '浙江农林大学', 'dc3cf34cdec1475d8cb6d67a3b06a649', '好喝', '', '100.00', '斤', '100.00', '元/斤', '1');
 
 -- ----------------------------
 -- Table structure for ncp_more
@@ -4108,6 +4221,7 @@ CREATE TABLE `ncp_more` (
 -- ----------------------------
 -- Records of ncp_more
 -- ----------------------------
+INSERT INTO `ncp_more` VALUES ('38a1c69f35cb4a009f0de123f2b76638', 'bc0fa64f12b74cb3a1b0f05fd32b5463', '', '', '其他', '', '', '', null, null, '', null, null, null);
 
 -- ----------------------------
 -- Table structure for nh_basic
@@ -4128,6 +4242,7 @@ CREATE TABLE `nh_basic` (
 -- ----------------------------
 -- Records of nh_basic
 -- ----------------------------
+INSERT INTO `nh_basic` VALUES ('dc3cf34cdec1475d8cb6d67a3b06a649', '17367077253', '25ca29f335a2a07c83d5c395528cb6b9', 'kerisyps', '2018-07-05 23:09:53', null, '0');
 
 -- ----------------------------
 -- Table structure for nh_more
@@ -4158,6 +4273,68 @@ CREATE TABLE `nh_more` (
 -- ----------------------------
 -- Records of nh_more
 -- ----------------------------
+INSERT INTO `nh_more` VALUES ('ef319cf912b941adaf495f33e1c4f7dc', 'dc3cf34cdec1475d8cb6d67a3b06a649', 'XX', '330452199810017718', '浙江农林大学', '330185', '17367077253', 'd31d0997c31b5ee72c467eaafb9485d0', 'veipwpsv', '0', '男', '浙江乐清', '汉族', '团员');
+
+-- ----------------------------
+-- Table structure for nh_purchases
+-- ----------------------------
+DROP TABLE IF EXISTS `nh_purchases`;
+CREATE TABLE `nh_purchases` (
+  `nh_purchases_id` varchar(24) CHARACTER SET utf8mb4 NOT NULL,
+  `nh_basic_id` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
+  `title` varchar(32) CHARACTER SET utf8mb4 NOT NULL COMMENT '标题',
+  `content` varchar(32) CHARACTER SET utf8mb4 NOT NULL COMMENT '内容',
+  `telephone` varchar(13) CHARACTER SET utf8mb4 NOT NULL COMMENT '联系电话',
+  `create_date` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '发布时间',
+  `level` int(4) DEFAULT '0' COMMENT '重要级别',
+  `statu` tinyint(4) DEFAULT '0' COMMENT '状态',
+  PRIMARY KEY (`nh_purchases_id`),
+  KEY `nh_basic_id` (`nh_basic_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of nh_purchases
+-- ----------------------------
+INSERT INTO `nh_purchases` VALUES ('5b82c0609f66c821305b4743', 'dc3cf34cdec1475d8cb6d67a3b06a649', '求购山核桃', '本人急需一大批临安特产的山核桃，有意者请电联', '17367077253', '2018-08-26 22:59:44', '0', '0');
+
+-- ----------------------------
+-- Table structure for notice
+-- ----------------------------
+DROP TABLE IF EXISTS `notice`;
+CREATE TABLE `notice` (
+  `notice_id` varchar(36) NOT NULL,
+  `notice_title` varchar(256) NOT NULL,
+  `notice_content` text NOT NULL,
+  `department_id` int(11) NOT NULL,
+  `notice_level` tinyint(4) DEFAULT '3' COMMENT '重要程度(1-5)',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `read_num` int(11) DEFAULT '0' COMMENT '阅读次数',
+  PRIMARY KEY (`notice_id`),
+  KEY `notice_fk_01` (`department_id`),
+  CONSTRAINT `notice_fk_01` FOREIGN KEY (`department_id`) REFERENCES `gov_department` (`department_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of notice
+-- ----------------------------
+INSERT INTO `notice` VALUES ('1', 'new标题', '内容', '1', '1', '2018-08-21 23:48:53', '0');
+INSERT INTO `notice` VALUES ('2', '标题', '内容', '1', '3', '2018-08-26 23:49:31', '0');
+
+-- ----------------------------
+-- Table structure for permission
+-- ----------------------------
+DROP TABLE IF EXISTS `permission`;
+CREATE TABLE `permission` (
+  `pmsn_id` int(11) NOT NULL AUTO_INCREMENT,
+  `pmsn_name` varchar(255) NOT NULL,
+  PRIMARY KEY (`pmsn_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of permission
+-- ----------------------------
+INSERT INTO `permission` VALUES ('1', '1');
+INSERT INTO `permission` VALUES ('2', '2');
 
 -- ----------------------------
 -- Table structure for product
@@ -5265,7 +5442,19 @@ DROP VIEW IF EXISTS `nh_view`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `nh_view` AS select `nh_basic`.`nh_basic_id` AS `nh_basic_id`,`nh_basic`.`nh_telephone` AS `nh_telephone`,`nh_basic`.`nh_register_date` AS `nh_register_date`,`nh_basic`.`nh_last_login_date` AS `nh_last_login_date`,`nh_basic`.`nh_login_count` AS `nh_login_count`,`nh_more`.`nh_more_id` AS `nh_more_id`,`nh_more`.`nh_real_name` AS `nh_real_name`,`nh_more`.`nh_id_card` AS `nh_id_card`,`nh_more`.`nh_ghdw_address` AS `nh_ghdw_address`,`nh_more`.`nh_ghdw_area_code` AS `nh_ghdw_area_code`,`nh_more`.`nh_ghdw_phone` AS `nh_ghdw_phone`,`nh_more`.`nh_status` AS `nh_status`,`nh_more`.`nh_sex` AS `nh_sex`,`nh_more`.`nh_origin` AS `nh_origin`,`nh_more`.`nh_nation` AS `nh_nation`,`nh_more`.`nh_politics` AS `nh_politics` from (`nh_basic` join `nh_more` on((`nh_more`.`nh_basic_id` = `nh_basic`.`nh_basic_id`))) ;
 
 -- ----------------------------
+-- View structure for notice_view
+-- ----------------------------
+DROP VIEW IF EXISTS `notice_view`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `notice_view` AS select `notice`.`notice_id` AS `notice_id`,`notice`.`notice_title` AS `notice_title`,`notice`.`notice_content` AS `notice_content`,`notice`.`department_id` AS `department_id`,`notice`.`notice_level` AS `notice_level`,`notice`.`create_time` AS `create_time`,`notice`.`read_num` AS `read_num`,`gov_department`.`department_name` AS `department_name`,`region_view`.`region_code` AS `region_code`,`region_view`.`region_name` AS `region_name` from ((`notice` join `gov_department` on((`notice`.`department_id` = `gov_department`.`department_id`))) join `region_view` on((`gov_department`.`area_code` = `region_view`.`region_code`))) ;
+
+-- ----------------------------
 -- View structure for province_city_area_view
 -- ----------------------------
 DROP VIEW IF EXISTS `province_city_area_view`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `province_city_area_view` AS select `province`.`code_p` AS `code_p`,`province`.`name_p` AS `name_p`,`city`.`code_c` AS `code_c`,`city`.`name_c` AS `name_c`,`area`.`code_a` AS `code_a`,`area`.`name_a` AS `name_a` from ((`province` join `city` on((`city`.`code_p` = `province`.`code_p`))) join `area` on((`area`.`code_c` = `city`.`code_c`))) ;
+
+-- ----------------------------
+-- View structure for region_view
+-- ----------------------------
+DROP VIEW IF EXISTS `region_view`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `region_view` AS select `a`.`code_a` AS `region_code`,`a`.`name_a` AS `region_name` from `area` `a` union select `c`.`code_c` AS `code_c`,`c`.`name_c` AS `name_c` from `city` `c` union select `p`.`code_p` AS `code_p`,`p`.`name_p` AS `name_p` from `province` `p` ;
